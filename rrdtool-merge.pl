@@ -35,8 +35,6 @@ my %optctl = (	rrdtool    => '/usr/local/apps/rrdtool/bin/rrdtool',
 				tmppath    => '/tmp',
 			 );
 
-my $removecmd = "/bin/rm";
-
 sub getdate
 {
 	my ($line) = @_;
@@ -58,6 +56,7 @@ sub rra
 	print "Start processing Round Robin DB\n";
 	my $cf          = $new_rra->first_child( 'cf' )->text;
 	my $pdp_per_row = $new_rra->first_child( 'pdp_per_row' )->text;
+	return unless defined $new_rra->first_child( 'xff' );
 	my $xff         = $new_rra->first_child( 'xff' )->text;
 
 	print "  CF         : $cf\n";
@@ -297,16 +296,16 @@ $old_twig->print ( \*TEMPXML );
 # Restore merged XML in RRD
 if (-e $optctl{mergedrrd})
 {
-	`$removecmd $optctl{mergedrrd}`;
+	unlink $optctl{mergedrrd};
 }
 print "Restoring from XML to RRD: $optctl{mergedrrd}\n";
 `$optctl{rrdtool} restore $temp_xml $optctl{mergedrrd}`;
 
 # Delete xml files in temporary directory
 print "File clean up\n";
-`$removecmd $old_xml`;
-`$removecmd $new_xml`;
-`$removecmd $temp_xml`;
+unlink $old_xml;
+unlink $new_xml;
+unlink $temp_xml;
 
 print "Processing complete. It took " . (time() - $timer) . " seconds\n";
 
