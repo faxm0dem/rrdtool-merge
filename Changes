@@ -1,0 +1,4 @@
+Fri Jun  7 2013 0.2 fwernli
+ - removed useless calls to '/bin/rm'
+ - use RRDs module interface
+ - remove need for old and new tempfiles
